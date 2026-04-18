@@ -1,10 +1,10 @@
 import { signOut } from "firebase/auth";
 import { useNavigate } from "react-router-dom";
 import { auth } from "../config/firebase";
-import { ROUTES } from "../config/Routes";
-import { FiBell, FiSearch, FiUser, FiSettings, FiLogOut } from "react-icons/fi";
+import { ROUTES } from "../config/routes";
+import { FiBell, FiSearch, FiUser, FiSettings, FiLogOut, FiSun, FiMoon } from "react-icons/fi";
 
-function Navbar({ user }) {
+function Navbar({ user, onToggleTheme, theme }) {
   const navigate = useNavigate();
 
   const handleLogout = async () => {
@@ -14,25 +14,32 @@ function Navbar({ user }) {
 
   return (
     <div className="navbar bg-base-100 shadow-sm px-6 sticky top-0 z-50">
-      {/* Left: Logo */}
       <div className="flex-1">
-        <span className="text-2xl font-black text-primary tracking-tight">UniHub</span>
+        <span className="text-2xl font-black text-primary tracking-tight cursor-pointer"
+          onClick={() => navigate(ROUTES.DASHBOARD)}>
+          UniHub
+        </span>
       </div>
 
-      {/* Right: Search + Bell + Avatar */}
-      <div className="flex items-center gap-3">
-
-        {/* Search bar */}
+      <div className="flex items-center gap-2">
+        {/* Search */}
         <label className="input input-bordered input-sm flex items-center gap-2 hidden md:flex">
-          <FiSearch className="opacity-50" />
-          <input type="text" placeholder="Search resources…" className="w-48" />
+          <FiSearch className="opacity-50 w-4 h-4" />
+          <input type="text" placeholder="Search resources…" className="w-44" />
         </label>
+
+        {/* Dark mode toggle */}
+        <button onClick={onToggleTheme} className="btn btn-ghost btn-sm btn-circle" title="Toggle theme">
+          {theme === "night"
+            ? <FiSun className="w-5 h-5 text-amber-400" />
+            : <FiMoon className="w-5 h-5" />}
+        </button>
 
         {/* Notification bell */}
         <div className="indicator">
           <span className="indicator-item badge badge-error badge-xs"></span>
           <button className="btn btn-ghost btn-sm btn-circle">
-            <FiBell className="h-5 w-5" />
+            <FiBell className="w-5 h-5" />
           </button>
         </div>
 
@@ -40,16 +47,10 @@ function Navbar({ user }) {
         <div className="dropdown dropdown-end">
           <div tabIndex={0} role="button" className="btn btn-ghost btn-circle avatar">
             {user?.photoURL ? (
-              /* Shows the real Google profile photo */
               <div className="w-9 rounded-full overflow-hidden">
-                <img
-                  src={user.photoURL}
-                  alt={user.displayName}
-                  referrerPolicy="no-referrer"
-                />
+                <img src={user.photoURL} alt={user.displayName} referrerPolicy="no-referrer" />
               </div>
             ) : (
-              /* Fallback initial if no photo */
               <div className="avatar placeholder">
                 <div className="bg-primary text-primary-content rounded-full w-9">
                   <span className="font-bold">{user?.displayName?.[0] ?? "U"}</span>
@@ -57,10 +58,7 @@ function Navbar({ user }) {
               </div>
             )}
           </div>
-
-          {/* Dropdown menu */}
-          <ul tabIndex={0} className="mt-3 z-[1] p-2 shadow menu menu-sm dropdown-content bg-base-100 rounded-box w-56">
-            {/* User info header */}
+          <ul tabIndex={0} className="mt-3 z-[1] p-2 shadow menu menu-sm dropdown-content bg-base-100 rounded-box w-56 border border-base-200">
             <li className="px-3 py-2 border-b border-base-200 mb-1">
               <div className="flex items-center gap-2 hover:bg-transparent cursor-default">
                 {user?.photoURL ? (
@@ -76,25 +74,11 @@ function Navbar({ user }) {
                 </div>
               </div>
             </li>
-
-            <li>
-              <a className="flex items-center gap-2">
-                <FiUser className="w-4 h-4" /> Profile
-              </a>
-            </li>
-            <li>
-              <a className="flex items-center gap-2">
-                <FiSettings className="w-4 h-4" /> Settings
-              </a>
-            </li>
-            <li>
-              <a onClick={handleLogout} className="flex items-center gap-2 text-error">
-                <FiLogOut className="w-4 h-4" /> Logout
-              </a>
-            </li>
+            <li><a className="flex items-center gap-2"><FiUser className="w-4 h-4" /> Profile</a></li>
+            <li><a className="flex items-center gap-2"><FiSettings className="w-4 h-4" /> Settings</a></li>
+            <li><a onClick={handleLogout} className="flex items-center gap-2 text-error"><FiLogOut className="w-4 h-4" /> Logout</a></li>
           </ul>
         </div>
-
       </div>
     </div>
   );
